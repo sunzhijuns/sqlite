@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ff00ff"
+        android:onClick="createDbAndInsertTestData"
+        android:text="创建数据库并且插入测试数据" />
+
+    <Button
+        android:id="@+id/btn_query"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ff00ff"
+        android:layout_marginTop="15dp"
+        android:onClick="onQueryClick"
+        android:text="sql查询数据" />
+
+    <Button
+        android:id="@+id/btn_api_query"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ff00ff"
+        android:layout_marginTop="15dp"
+        android:onClick="onQueryClick"
+        android:text="api_sql查询数据" />
+
+
+
+
+
+
+
+</LinearLayout>
