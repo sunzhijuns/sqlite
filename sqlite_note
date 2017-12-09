@@ -1,7 +1,7 @@
 -- sqlite 
 1
 类型
-	teger varchar(10) float double char(10) text 
+	Integer varchar(10) float double char(10) text 
 2
 创建表
 	create table 表名(字段名称 数据类型 约束, ...)
