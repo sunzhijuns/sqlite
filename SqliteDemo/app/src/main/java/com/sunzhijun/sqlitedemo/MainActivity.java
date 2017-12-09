@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
-        CursorAdapter
     }
     public void createDb(View view) {
         /**
