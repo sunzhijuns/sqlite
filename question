@@ -1,0 +1,11 @@
+获取 Android 模拟器root 权限（解决data权限问题）
+	1，进入SDK 安装目录： 并进入 platform-tools 目录：
+		D:\Android\sdk\platform-tools
+	2，按住Shift按键 对准窗口右击鼠标。
+	3,选择 在此处打开 命令窗口：
+
+		输入命令：adb remount 或者 adb root
+
+		完美解决 data 目录打不开的问题。
+		
+	#此时可以打开data 文件夹 并pull 或者 push文件：
