@@ -3,11 +3,14 @@ package com.sunzhijun.sqlitedemo;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.sunzhijun.bean.Person;
@@ -15,6 +18,7 @@ import com.sunzhijun.utils.Constant;
 import com.sunzhijun.utils.DbManager;
 import com.sunzhijun.utils.MySqliteHelper;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,13 +26,59 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
     private MySqliteHelper helper;
+    private ListView lv;
+
+    private SQLiteDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_query);
+        setContentView(R.layout.list_view);
         helper = DbManager.getInstance(this);
-//        createDb();
+        lv = (ListView) findViewById(R.id.lv);
+
+        //1.获取数据库查询的数据源
+        String path =Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"info.db";
+
+        Log.i("路径：",File.separator);
+        Log.i("路径：",path);
+        /**
+         * SQLiteDatabase openDatabase(String path, CursorFactory factory, int flags)
+         * String path 表示当前打开数据库存放路径
+         * CursorFactory factory
+         * int flags 打开数据库的操作模式
+         */
+        db = SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READONLY);
+        Cursor cursor = db.rawQuery("select * from "+Constant.TABLE_NAME,null);
+//        SQLiteDatabase db = helper.getWritableDatabase();
+//        String sql = "select * from "+ Constant.TABLE_NAME;
+//        Cursor cursor = DbManager.selectDataBySql(db,sql,null);
+        //2.把数据源的数据加载到适配器中
+        /**
+         * Context context, int layout, Cursor c, String[] from, int[] to, int flags
+         Context context
+         int layout 适配器中每项item的布局id
+         Cursor c cursor数据源
+         String[] from cursor 数据表字段的数组
+         int[] to 展示字段对应值控件资源id
+         int flags 设置适配器的标记
+         */
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(
+                this,R.layout.simplecursor_item,cursor,
+                new String[]{Constant._ID,Constant.NAME,Constant.AGE},
+                new int[]{R.id.tv_id,R.id.tv_name,R.id.tv_age},
+                SimpleCursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        //3.将适配器的数据加载到控件
+        lv.setAdapter(adapter);
+
+
+
+
+
+
+
+//
 
     }
 
