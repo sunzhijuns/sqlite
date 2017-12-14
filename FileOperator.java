@@ -1,138 +1,314 @@
+package otheri.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-/**
- * 
- * @ClassName:  FileOperator   
- * @Description:  文件操作类，删除文件或文件目录
- * @author: SAU_LC66
- * @date:   2014-09-25 19:01  
- */
-public class FileOperator {
+import otheri.io.Input;
+import otheri.io.Output;
+import android.content.Context;
+import android.os.Environment;
+public class FileHelper {
+   private Context context;
+   private String SDPATH;
+   private String FILESPATH;
+   public FileHelper(Context context) {
+      this.context = context;
+      SDPATH = Environment.getExternalStorageDirectory().getPath() + "//";
+      FILESPATH = this.context.getFilesDir().getPath() + "//";
+  }
+ //在SD卡上创建文件
+  public File creatSDFile(String fileName) throws IOException {
+      File file = new File(SDPATH + fileName);
+      file.createNewFile();
+      return file;
+  }
+ //删除SD卡上的文件
+  public boolean delSDFile(String fileName) {
+      File file = new File(SDPATH + fileName);
+      if (file == null || !file.exists() || file.isDirectory())
+         return false;
+     file.delete();
+     return true;
+ }
+ // 在SD卡上创建目录
+ public File creatSDDir(String dirName) {
+  File dir = new File(SDPATH + dirName);
+  dir.mkdir();
+  return dir;
+}
+ // 删除SD卡上的目录
+public boolean delSDDir(String dirName) {
+  File dir = new File(SDPATH + dirName);
+  return delDir(dir);
+}
+ // 修改SD卡上的文件或目录名
+public boolean renameSDFile(String oldfileName, String newFileName) {
+  File oleFile = new File(SDPATH + oldfileName);
+  File newFile = new File(SDPATH + newFileName);
+  return oleFile.renameTo(newFile);
+}
+ // 拷贝SD卡上的单个文件
+public boolean copySDFileTo(String srcFileName, String destFileName)
+throws IOException {
+  File srcFile = new File(SDPATH + srcFileName);
+  File destFile = new File(SDPATH + destFileName);
+  return copyFileTo(srcFile, destFile);
+}
+ //拷贝SD卡上指定目录的所有文件
+public boolean copySDFilesTo(String srcDirName, String destDirName)
+throws IOException {
+  File srcDir = new File(SDPATH + srcDirName);
+  File destDir = new File(SDPATH + destDirName);
+  return copyFilesTo(srcDir, destDir);
+}
+ // 移动SD卡上的单个文件
+public boolean moveSDFileTo(String srcFileName, String destFileName)
+throws IOException {
+  File srcFile = new File(SDPATH + srcFileName);
+  File destFile = new File(SDPATH + destFileName);
+  return moveFileTo(srcFile, destFile);
+}
+ // 移动SD卡上的指定目录的所有文件
+public boolean moveSDFilesTo(String srcDirName, String destDirName)
+throws IOException {
+  File srcDir = new File(SDPATH + srcDirName);
+  File destDir = new File(SDPATH + destDirName);
+  return moveFilesTo(srcDir, destDir);
+}
 
-	/**
-	 * 复制文件目录
-	 * @param srcDir 要复制的源目录 eg:/mnt/sdcard/DB
-	 * @param destDir 复制到的目标目录 eg:/mnt/sdcard/db/
-	 * @return 
-	 */
-	public static boolean copyDir(String srcDir, String destDir){
-        File sourceDir = new File(srcDir);
-        //判断文件目录是否存在
-        if(!sourceDir.exists()){
-            return false;
-        }
-        //判断是否是目录
-        if (sourceDir.isDirectory()) {
-            File[] fileList = sourceDir.listFiles();
-            File targetDir = new File(destDir);
-            //创建目标目录
-            if(!targetDir.exists()){
-                targetDir.mkdirs();
-            }
-            //遍历要复制该目录下的全部文件
-            for(int i= 0;i<fileList.length;i++){
-                if(fileList[i].isDirectory()){//如果如果是子目录进行递归
-                	copyDir(fileList[i].getPath()+ "/", 
-                			destDir + fileList[i].getName() + "/");
-                }else{//如果是文件则进行文件拷贝
-                	copyFile(fileList[i].getPath(), destDir +fileList[i].getName());
-                }
-            }
-            return true;
-		}else {
-			copyFileToDir(srcDir,destDir);
-			return true;
-		}
-    }
-	
-	
-    /**
-     * 复制文件（非目录）
-     * @param srcFile 要复制的源文件  
-     * @param destFile 复制到的目标文件 
-     * @return
-     */
-    private static boolean copyFile(String srcFile, String destFile){
-        try{
-            InputStream streamFrom = new FileInputStream(srcFile);
-            OutputStream streamTo = new FileOutputStream(destFile);
-            byte buffer[]=new byte[1024];
-            int len;
-            while ((len= streamFrom.read(buffer)) > 0){
-            	streamTo.write(buffer, 0, len);
-            }
-            streamFrom.close();
-            streamTo.close();
-            return true;
-        } catch(Exception ex){
-            return false;
-        }
-    }
-    
-    
-    /**
-     * 把文件拷贝到某一目录下
-     * @param srcFile
-     * @param destDir
-     * @return
-     */
-    public static boolean copyFileToDir(String srcFile, String destDir){
-    	File fileDir = new File(destDir);
-    	if (!fileDir.exists()) {
-			fileDir.mkdir();
-		}
-    	String destFile = destDir +"/" + new File(srcFile).getName();
-        try{
-            InputStream streamFrom = new FileInputStream(srcFile);
-            OutputStream streamTo = new FileOutputStream(destFile);
-            byte buffer[]=new byte[1024];
-            int len;
-            while ((len= streamFrom.read(buffer)) > 0){
-            	streamTo.write(buffer, 0, len);
-            }
-            streamFrom.close();
-            streamTo.close();
-            return true;
-        } catch(Exception ex){
-            return false;
-        }
-    }
+ //将文件写入sd卡。如:writeSDFile("test.txt");
+public Output writeSDFile(String fileName) throws IOException {
+  File file = new File(SDPATH + fileName);
+  FileOutputStream fos = new FileOutputStream(file);
+  return new Output(fos);
+}
+ // 在原有文件上继续写文件。如:appendSDFile("test.txt");
+public Output appendSDFile(String fileName) throws IOException {
+  File file = new File(SDPATH + fileName);
+  FileOutputStream fos = new FileOutputStream(file, true);
+  return new Output(fos);
+}
+ // 从SD卡读取文件。如:readSDFile("test.txt");
+public Input readSDFile(String fileName) throws IOException {
+  File file = new File(SDPATH + fileName);
+  FileInputStream fis = new FileInputStream(file);
+  return new Input(fis);
+}
 
-    
-    /**
-     * 移动文件目录到某一路径下
-     * @param srcFile
-     * @param destDir
-     * @return
-     */
-    public static boolean moveFile(String srcFile, String destDir) {
-    	//复制后删除原目录
-		if (copyDir(srcFile, destDir)) {
-			deleteFile(new File(srcFile));
-			return true;
-		}
-    	return false;
-	}
 
-	/**
-	 * 删除文件（包括目录）
-	 * @param delFile
-	 */
-	public static void deleteFile(File delFile) {
-		//如果是目录递归删除
-	  if (delFile.isDirectory()) {
-	   File[] files = delFile.listFiles();
-	   for (File file : files) {
-	     deleteFile(file);
-	   }
-	  }else{
-		  delFile.delete();
-	  }
-	  //如果不执行下面这句，目录下所有文件都删除了，但是还剩下子目录空文件夹
-	  delFile.delete();
-	}
-	
+ // 建立私有文件
+public File creatDataFile(String fileName) throws IOException {
+  File file = new File(FILESPATH + fileName);
+  file.createNewFile();
+  return file;
+}
+ // 建立私有目录
+public File creatDataDir(String dirName) {
+  File dir = new File(FILESPATH + dirName);
+  dir.mkdir();
+  return dir;
+}
+ // 删除私有文件
+public boolean delDataFile(String fileName) {
+  File file = new File(FILESPATH + fileName);
+  return delFile(file);
+}
+ // 删除私有目录
+public boolean delDataDir(String dirName) {
+  File file = new File(FILESPATH + dirName);
+  return delDir(file);
+}
+ // 更改私有文件名
+public boolean renameDataFile(String oldName, String newName) {
+  File oldFile = new File(FILESPATH + oldName);
+  File newFile = new File(FILESPATH + newName);
+  return oldFile.renameTo(newFile);
+}
+ // 在私有目录下进行文件复制
+public boolean copyDataFileTo(String srcFileName, String destFileName)
+throws IOException {
+  File srcFile = new File(FILESPATH + srcFileName);
+  File destFile = new File(FILESPATH + destFileName);
+  return copyFileTo(srcFile, destFile);
+}
+ // 复制私有目录里指定目录的所有文件
+public boolean copyDataFilesTo(String srcDirName, String destDirName)
+throws IOException {
+  File srcDir = new File(FILESPATH + srcDirName);
+  File destDir = new File(FILESPATH + destDirName);
+  return copyFilesTo(srcDir, destDir);
+}
+ // 移动私有目录下的单个文件
+public boolean moveDataFileTo(String srcFileName, String destFileName)
+throws IOException {
+  File srcFile = new File(FILESPATH + srcFileName);
+  File destFile = new File(FILESPATH + destFileName);
+  return moveFileTo(srcFile, destFile);
+}
+ // 移动私有目录下的指定目录下的所有文件
+public boolean moveDataFilesTo(String srcDirName, String destDirName)
+throws IOException {
+  File srcDir = new File(FILESPATH + srcDirName);
+  File destDir = new File(FILESPATH + destDirName);
+  return moveFilesTo(srcDir, destDir);
+}
+ //将文件写入应用私有的files目录。如:writeFile("test.txt");
+public Output wirteFile(String fileName) throws IOException {
+  OutputStream os = context.openFileOutput(fileName,
+    Context.MODE_WORLD_WRITEABLE);
+  return new Output(os);
+}
+ // 在原有文件上继续写文件。如:appendFile("test.txt");
+public Output appendFile(String fileName) throws IOException {
+  OutputStream os = context.openFileOutput(fileName, Context.MODE_APPEND);
+  return new Output(os);
+}
+ //从应用的私有目录files读取文件。如:readFile("test.txt");
+public Input readFile(String fileName) throws IOException {
+  InputStream is = context.openFileInput(fileName);
+  return new Input(is);
+}
+
+
+
+
+
+  */
+ // 删除一个文件
+public boolean delFile(File file) {
+  if (file.isDirectory())
+     return false;
+ return file.delete();
+}
+ // 删除一个目录（可以是非空目录）
+public boolean delDir(File dir) {
+  if (dir == null || !dir.exists() || dir.isFile()) {
+     return false;
+ }
+ for (File file : dir.listFiles()) {
+     if (file.isFile()) {
+        file.delete();
+    } else if (file.isDirectory()) {
+    delDir(file);// 递归
+}
+}
+dir.delete();
+return true;
+}
+ //拷贝一个文件,srcFile源文件，destFile目标文件
+public boolean copyFileTo(File srcFile, File destFile) throws IOException {
+  if (srcFile.isDirectory() || destFile.isDirectory())
+   return false;// 判断是否是文件
+FileInputStream fis = new FileInputStream(srcFile);
+FileOutputStream fos = new FileOutputStream(destFile);
+int readLen = 0;
+byte[] buf = new byte[1024];
+while ((readLen = fis.read(buf)) != -1) {
+ fos.write(buf, 0, readLen);
+}
+fos.flush();
+fos.close();
+fis.close();
+return true;
+}
+ // 拷贝目录下的所有文件到指定目录
+public boolean copyFilesTo(File srcDir, File destDir) throws IOException {
+  if (!srcDir.isDirectory() || !destDir.isDirectory())
+   return false;// 判断是否是目录
+if (!destDir.exists())
+   return false;// 判断目标目录是否存在
+File[] srcFiles = srcDir.listFiles();
+for (int i = 0; i < srcFiles.length; i++) {
+ if (srcFiles[i].isFile()) {
+    // 获得目标文件
+    File destFile = new File(destDir.getPath() + "//"
+      + srcFiles[i].getName());
+    copyFileTo(srcFiles[i], destFile);
+} else if (srcFiles[i].isDirectory()) {
+    File theDestDir = new File(destDir.getPath() + "//"
+      + srcFiles[i].getName());
+    copyFilesTo(srcFiles[i], theDestDir);
+}
+}
+return true;
+}
+ // 移动一个文件
+public boolean moveFileTo(File srcFile, File destFile) throws IOException {
+  boolean iscopy = copyFileTo(srcFile, destFile);
+  if (!iscopy)
+     return false;
+ delFile(srcFile);
+ return true;
+}
+ // 移动目录下的所有文件到指定目录
+public boolean moveFilesTo(File srcDir, File destDir) throws IOException {
+  if (!srcDir.isDirectory() || !destDir.isDirectory()) {
+     return false;
+ }
+ File[] srcDirFiles = srcDir.listFiles();
+ for (int i = 0; i < srcDirFiles.length; i++) {
+     if (srcDirFiles[i].isFile()) {
+        File oneDestFile = new File(destDir.getPath() + "//"
+          + srcDirFiles[i].getName());
+        moveFileTo(srcDirFiles[i], oneDestFile);
+        delFile(srcDirFiles[i]);
+    } else if (srcDirFiles[i].isDirectory()) {
+        File oneDestFile = new File(destDir.getPath() + "//"
+          + srcDirFiles[i].getName());
+        moveFilesTo(srcDirFiles[i], oneDestFile);
+        delDir(srcDirFiles[i]);
+    }
+}
+return true;
+}
+}
+ //优化移动SD卡上的单个文件
+public static boolean moveSDFileTo(String srcPath, String destPath) {
+    File srcFile = new File(srcPath);
+    File destFile = new File(destPath);
+    if (!srcFile.exists())
+        return false;
+    if (destFile.exists() && destFile.length() == srcFile.length()) {
+        Log.i("转移apk", "已存在 返回false");
+        return false;
+    }
+    return srcFile.renameTo(new File(destPath));
+}
+// getPath与getAbsoultePath的区别:
+// getAbsolutePath()：返回抽象路径名的绝对路径名字符串。
+public static void test1(){
+    File file1 = new File(".//test1.txt");
+    File file2 = new File("D://workspace//test//test1.txt");
+    System.out.println("-----默认相对路径：取得路径不同------");
+    System.out.println(file1.getPath());
+    System.out.println(file1.getAbsolutePath());
+    System.out.println("-----默认绝对路径:取得路径相同------");
+    System.out.println(file2.getPath());
+    System.out.println(file2.getAbsolutePath());
+
+}
+// -----默认相对路径：取得路径不同------
+// ./test1.txt
+// D:/workspace/test/./test1.txt
+// -----默认绝对路径:取得路径相同------
+// D:/workspace/test/test1.txt
+// D:/workspace/test/test1.txt
+// ----------------------------------------------------
+public static void test2() throws Exception{
+    File file = new File("..//src//test1.txt");
+    System.out.println(file.getAbsolutePath());
+    System.out.println(file.getCanonicalPath());
+}
+// D:/workspace/test/../src/test1.txt
+// D:/workspace/src/test1.txt
+// --------------------------------------------
+public static void test3() throws Exception{
+    File file = new File("D://Text.txt");
+    System.out.println(file.getCanonicalPath());
+    // (1),确定D盘下没有Text.txt这个文件，直接执行这段代码，得到的结果是:
+    // D:/Text.txt注意这里试大写的Text.txt
+    // (2)在D盘下建立一个文件，名叫text.txt，再次执行代码，得到结果
+    // D:/text.txt同样的代码得到不同的结果。
 }
