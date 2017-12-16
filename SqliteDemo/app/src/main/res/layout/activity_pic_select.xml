@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <GridView
+        android:verticalSpacing="3dp"
+        android:horizontalSpacing="3dp"
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:stretchMode="columnWidth"
+        android:numColumns="3"
+        android:id="@+id/gv_pic_sele"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </GridView>
+    <RelativeLayout
+        android:id="@+id/rl_bottom_pic_sele"
+        android:background="#ee6e6c6c"
+        android:clipChildren="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:textColor="@android:color/white"
+            android:text="所有图片"
+            android:paddingLeft="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/tv_dir_name_pic_sele"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:textColor="@android:color/white"
+            android:text="10"
+            android:paddingRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/tv_dir_count_pic_sele"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

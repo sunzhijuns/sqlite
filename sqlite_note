@@ -30,7 +30,7 @@
 	select * from person where _id<>1
 	select * from person where _id=1 and age>18
 	select * from person where name like "%小%" -- 中间含有"小"，前后有任意多的字符
-	select * from person where name like "%小%" -- 一个字符+小+任意多的字符
+	select * from person where name like "_小%" -- 一个字符+小+任意多的字符
 	select * from person where name is null 
 	select * from person where age between 10 and 20
 	select * from person where age>18 order by _id 

@@ -31,7 +31,7 @@ public class TransationActivity extends AppCompatActivity {
         SQLiteDatabase db = helper.getWritableDatabase();
         //1.数据库显示的开启事务
         db.beginTransaction();
-        for (int i = 100; i <= 2000; i++) {
+        for (int i = 10; i <= 20; i++) {
             String sql ="insert into "+Constant.TABLE_NAME+" values("+i+",'zhangsan"+i+"',23)";
             DbManager.execSQL(db,sql);
         }
